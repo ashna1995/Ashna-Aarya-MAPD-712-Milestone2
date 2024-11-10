@@ -8,7 +8,6 @@
  * including their personal details and recent medical tests. It allows adding new tests
  * and viewing the patient's full medical history.
  */
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -51,21 +50,33 @@ export default function PatientDetailsScreen({ route, navigation }) {
     }, [])
   );
 
-  // Add this useEffect to handle refresh after adding a test
   useEffect(() => {
     if (route.params?.refresh) {
       fetchPatientDetails();
       fetchPatientTests();
-      // Clear the refresh param
       navigation.setParams({ refresh: undefined });
     }
   }, [route.params?.refresh]);
 
   const renderTestItem = ({ item }) => (
     <View style={styles.testItem}>
-      <Text style={styles.testType}>{item.type}</Text>
-      <Text style={styles.testValue}>{item.value}</Text>
-      <Text style={styles.testDate}>{new Date(item.date).toLocaleDateString()}</Text>
+      <View>
+        <Text style={styles.testType}>{item.type}</Text>
+        <Text style={styles.testValue}>{item.value}</Text>
+        <Text style={styles.testDate}>
+          Created: {new Date(item.date).toLocaleString()}
+        </Text>
+        {item.updatedAt && item.updatedAt !== item.createdAt && (
+          <Text style={styles.testDate}>
+            Updated: {new Date(item.updatedAt).toLocaleString()}
+          </Text>
+        )}
+      </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate('UpdateDeleteTest', { patientId, testId: item._id })}
+      >
+        <Ionicons name="create-outline" size={24} color="#007AFF" />
+      </TouchableOpacity>
     </View>
   );
 
@@ -81,10 +92,19 @@ export default function PatientDetailsScreen({ route, navigation }) {
     <SafeAreaView style={styles.container}>
       {patient && (
         <View style={styles.patientInfo}>
-          <Text style={styles.patientName}>{patient.name}</Text>
-          <Text style={styles.patientDetails}>{patient.age} years old • {patient.gender}</Text>
-          <Text style={styles.patientDetails}>{patient.address}</Text>
-          <Text style={styles.patientDetails}>{patient.phoneNumber}</Text>
+          <View style={styles.patientHeader}>
+            <View>
+              <Text style={styles.patientName}>{patient.name}</Text>
+              <Text style={styles.patientDetails}>{patient.age} years old • {patient.gender}</Text>
+              <Text style={styles.patientDetails}>{patient.address}</Text>
+              <Text style={styles.patientDetails}>{patient.phoneNumber}</Text>
+            </View>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('UpdateDeletePatient', { patientId })}
+            >
+              <Ionicons name="create-outline" size={24} color="#007AFF" />
+            </TouchableOpacity>
+          </View>
           {patient.criticalCondition && (
             <View style={styles.criticalIndicator}>
               <Ionicons name="warning" size={24} color="#FF3B30" />
@@ -122,6 +142,23 @@ export default function PatientDetailsScreen({ route, navigation }) {
 }
 
 const styles = StyleSheet.create({
+  
+  patientHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  testItem: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: '#F0F4F8',
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 10,
+  },
+
+
   container: {
     flex: 1,
     backgroundColor: '#F0F4F8',

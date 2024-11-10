@@ -27,6 +27,8 @@ import AddTestScreen from './screens/AddTestScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import PatientHistoryScreen from './screens/PatientHistoryScreen';
 import CriticalPatientsScreen from './screens/CriticalPatientsScreen';
+import UpdateDeletePatientScreen from './screens/UpdateDeletePatientScreen';
+import UpdateDeleteTestScreen from './screens/UpdateDeleteTestScreen';
 
 // Create navigators
 const Stack = createNativeStackNavigator();
@@ -37,7 +39,6 @@ function MainTabs() {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
-        // Configure tab bar icons
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           if (route.name === 'PatientsList') {
@@ -88,6 +89,8 @@ export default function App() {
           <Stack.Screen name="PatientDetails" component={PatientDetailsScreen} options={{ title: 'Patient Details' }} />
           <Stack.Screen name="AddTest" component={AddTestScreen} options={{ title: 'Add Test' }} />
           <Stack.Screen name="PatientHistory" component={PatientHistoryScreen} options={{ title: 'Patient History' }} />
+          <Stack.Screen name="UpdateDeletePatient" component={UpdateDeletePatientScreen} options={{ title: 'Update/Delete Patient' }} />
+          <Stack.Screen name="UpdateDeleteTest" component={UpdateDeleteTestScreen} options={{ title: 'Update/Delete Test' }} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaProvider>
